@@ -1,0 +1,114 @@
+openapi: 3.0.0
+info:
+  title: Gitlab Manager API
+  description: |
+    REST API for Gitlab Manager.
+  version: 0.0.1
+
+servers:
+  - url: http://localhost:8080/api
+    description: Local server
+  - url: https://dev.gitlabmanager.com/api
+    description: Server for development testing
+
+paths:
+  /project/create:
+    post:
+      summary: Creates a new Gitlab Project.
+      description: >
+        Creates a new Gitlab Project.
+      operationId: createProject
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateProject"
+      responses:
+        "200":
+          description: Project created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Project"
+      #TODO investigate gitlab API as error request are related to what gitlab returns as errors
+
+  /project/user/add:
+    post:
+      summary: Add a user to gitlab project.
+      description: >
+        Add a user to gitlab project.
+      operationId: addUserToProject
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AddUserToProject"
+      responses:
+        "200":
+          description: User added successfully
+        "404":
+          description: User does not exist
+
+
+  /project/user/remove:
+    delete:
+      summary: Removes a user from a gitlab project.
+      description: |
+        Removes a user from a gitlab project.
+      requestBody:
+        description: >
+          Add a user to a gitlab project.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RemoveUserFromProject"
+      responses:
+        "200":
+          description: User removed successfully
+        "404":
+          description: User does not exist
+
+
+components:
+  schemas:
+    Project:
+      type: object
+      properties:
+        id:
+          type: string
+      required:
+        - id
+    CreateProject:
+      type: object
+      properties:
+        projectName:
+          type: string
+        namespaceId:
+          type: string
+        description:
+          type: string
+      required:
+        - projectName
+        - namespaceId
+        - description
+    AddUserToProject:
+      type: object
+      properties:
+        projectId:
+          type: string
+        userId:
+          type: string
+      required:
+        - projectId
+        - userId
+    RemoveUserFromProject:
+      type: object
+      properties:
+        projectId:
+          type: string
+        userId:
+          type: string
+      required:
+        - projectId
+        - userId

@@ -1,0 +1,90 @@
+buildscript {
+  repositories {
+    mavenLocal()
+    mavenCentral()
+  }
+  dependencies {
+    classpath "org.openapitools:openapi-generator-gradle-plugin:7.10.0"
+  }
+}
+plugins {
+  id 'idea'
+  id 'java'
+  id 'org.springframework.boot' version '3.4.0'
+  id("org.openapi.generator") version "7.10.0"
+}
+
+apply plugin: 'io.spring.dependency-management'
+
+group = 'dev.ixixpercent.gitlab_manager'
+version = '1.0-SNAPSHOT'
+
+idea {
+  module {
+    downloadJavadoc = true
+    downloadSources = true
+  }
+}
+
+
+openApiGenerate {
+  generatorName.set("spring")
+  generateApiDocumentation.set(true)
+  inputSpec.set("$projectDir/src/api/gitlab_manager-v0.1.yaml")
+  outputDir.set("$buildDir/generated/openapi")
+  apiPackage.set("$group" + ".api")
+  modelPackage.set("$group" + ".model")
+  configOptions.set([
+    dateLibrary              : "java8",
+    useSpringBoot3           : "true",
+    skipSupportingFiles      : "true",
+    generateSpringApplication: "false",
+    skipDefaultInterface     : "true",
+    interfaceOnly            : "true"
+  ])
+}
+
+java {
+  sourceCompatibility = 21
+  targetCompatibility = 21
+}
+
+sourceSets.main.java.srcDir "${buildDir}/generated/openapi/src/main/java"
+//sourceSets.main.resources.srcDir "${buildDir}/generated/openapi/src/main/resources"
+sourceSets.test.java.srcDir "${buildDir}/generated/openapi/src/test/java"
+//sourceSets.test.resources.srcDir "${buildDir}/generated/openapi/src/test/resources"
+
+compileJava.dependsOn tasks.named("openApiGenerate")
+
+repositories {
+  mavenCentral()
+}
+
+dependencies {
+
+  compileOnly 'org.projectlombok:lombok:1.18.36'
+  annotationProcessor 'org.projectlombok:lombok:1.18.36'
+
+
+
+  implementation(
+    'org.mapstruct:mapstruct:1.5.5.Final',
+
+    'org.openapitools:jackson-databind-nullable:0.2.6',
+    'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0',
+    'org.springframework.boot:spring-boot-starter-web',
+//    'org.springframework.boot:spring-boot-starter-data-jpa'
+  )
+
+  testAnnotationProcessor 'org.projectlombok:lombok:1.18.36'
+  testCompileOnly 'org.projectlombok:lombok:1.18.36'
+  testImplementation platform('org.junit:junit-bom:5.10.3')
+  testImplementation(
+    'org.junit.jupiter:junit-jupiter',
+    'org.springframework.boot:spring-boot-starter-test'
+  )
+}
+
+test {
+  useJUnitPlatform()
+}

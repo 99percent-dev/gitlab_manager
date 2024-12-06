@@ -7,14 +7,18 @@ buildscript {
     classpath "org.openapitools:openapi-generator-gradle-plugin:7.10.0"
   }
 }
+
 plugins {
   id 'idea'
   id 'java'
   id 'org.springframework.boot' version '3.4.0'
   id("org.openapi.generator") version "7.10.0"
 }
-
 apply plugin: 'io.spring.dependency-management'
+
+repositories {
+  mavenCentral()
+}
 
 group = 'dev.ixixpercent.gitlab_manager'
 version = '1.0-SNAPSHOT'
@@ -49,15 +53,75 @@ java {
   targetCompatibility = 21
 }
 
-sourceSets.main.java.srcDir "${buildDir}/generated/openapi/src/main/java"
-//sourceSets.main.resources.srcDir "${buildDir}/generated/openapi/src/main/resources"
-sourceSets.test.java.srcDir "${buildDir}/generated/openapi/src/test/java"
-//sourceSets.test.resources.srcDir "${buildDir}/generated/openapi/src/test/resources"
 
+static def gitCommit() {
+  def commit = ""
+  def proc = "git rev-parse --short HEAD".execute()
+  proc.in.eachLine { line -> commit = line }
+  proc.err.eachLine { line -> println line }
+  proc.waitFor()
+  commit
+}
+
+static def gitBranch() {
+  def branch = ""
+  def proc = "git rev-parse --abbrev-ref HEAD".execute()
+  proc.in.eachLine { line -> branch = line }
+  proc.err.eachLine { line -> println line }
+  proc.waitFor()
+  branch
+}
+
+static def buildNumber() { System.getProperty("buildNumber") ?: "local" }
+
+
+project.ext.set('branch', gitBranch())
+project.ext.set('commit', gitCommit())
+project.ext.set('buildNumber', buildNumber())
+
+// OpenAPI
+sourceSets.main.java.srcDir "${buildDir}/generated/openapi/src/main/java"
+sourceSets.test.java.srcDir "${buildDir}/generated/openapi/src/test/java"
 compileJava.dependsOn tasks.named("openApiGenerate")
 
-repositories {
-  mavenCentral()
+sourceSets {
+  integrationTest {
+    compileClasspath += sourceSets.main.output
+    runtimeClasspath += sourceSets.main.output
+  }
+}
+
+// integration tests
+configurations {
+  integrationTestImplementation.extendsFrom testImplementation
+  integrationTestRuntimeOnly.extendsFrom testRuntimeOnly
+}
+
+task integrationTest(type: Test) {
+  useJUnitPlatform()
+  description = 'Runs integration tests.'
+  group = 'verification'
+
+  testClassesDirs = sourceSets.integrationTest.output.classesDirs
+  classpath = sourceSets.integrationTest.runtimeClasspath
+  shouldRunAfter test
+}
+check.dependsOn integrationTest
+
+// docker image
+task dockerImage(dependsOn: bootJar) {
+  copy {
+    from "./"
+    into "build/libs"
+    include "Dockerfile"
+  }
+
+  def dockerCommand = "docker build ./build/libs --build-arg JAR_FILE=${archivesBaseName}-${version}.jar -t ${project.name}:${version}_${project.branch}_${project.commit}_${project.buildNumber}"
+  println "Executing: ${dockerCommand}"
+  def proc = dockerCommand.execute()
+  proc.in.eachLine { line -> println line }
+  proc.err.eachLine { line -> println line }
+  proc.waitFor()
 }
 
 dependencies {
@@ -90,8 +154,29 @@ dependencies {
     'org.junit.jupiter:junit-jupiter',
     'org.springframework.boot:spring-boot-starter-test'
   )
+
+
+  integrationTestImplementation(
+    'org.springframework.boot:spring-boot-starter-test',
+    'org.junit.jupiter:junit-jupiter-api:5.11.0',
+    'org.junit.jupiter:junit-jupiter-params:5.11.0',
+    'org.junit.jupiter:junit-jupiter-api:5.11.0',
+    'org.springframework.boot:spring-boot-starter-validation',
+
+//    'org.mockito:mockito-core:4.6.1',
+//    'org.mockito:mockito-junit-jupiter:4.6.1',
+
+    'org.testcontainers:testcontainers:1.20.1',
+    'org.testcontainers:junit-jupiter:1.20.0',
+  )
+
+  integrationTestRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.11.0'
 }
 
 test {
   useJUnitPlatform()
+  testLogging {
+    // to see the exceptions of failed tests
+    exceptionFormat = 'full'
+  }
 }

@@ -1,8 +1,9 @@
 #TODO use env variable
 #TODO group id 98480539
+#TODO admin id 1539221
 
 gitlab:
-  admin: 123456789
+  admin: 1539221
   personalAccessToken: "glpat-apxm2oxyPKmJh6kqETyc"
   url: "https://gitlab.com/"
 

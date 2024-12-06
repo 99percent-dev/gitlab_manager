@@ -29,7 +29,6 @@ public class ProjectController implements ProjectApi {
 
   @Override
   public ResponseEntity<Project> createProject(CreateProject project) {
-    projectService.createProject(project);
     return ok(new Project(projectService.createProject(project)));
   }
 

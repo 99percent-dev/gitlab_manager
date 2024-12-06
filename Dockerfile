@@ -1,4 +1,4 @@
-FROM eclipse-temurin:17-jre-alpine
+FROM eclipse-temurin:21-jre-alpine
 ARG JAR_FILE
 ADD ${JAR_FILE} app.jar
 ENV LD_PRELOAD=/lib/libgcompat.so.0
@@ -12,8 +12,9 @@ VOLUME ["/tmp", "/opt/config"]
 RUN cp -r dependencies/* ./
 RUN cp -r spring-boot-loader/* ./
 RUN cp -r application/* ./
+RUN ls ./
 EXPOSE 8080
-ENTRYPOINT ["java","org.springframework.boot.loader.JarLauncher","-noverify","-XshowSettings:all","-XX:MaxRAMPercentage=85",\
+ENTRYPOINT ["java","-jar","app.jar","-noverify","-XshowSettings:all","-XX:MaxRAMPercentage=85",\
       "-XX:+UnlockExperimentalVMOptions", \
       "-XX:+UseShenandoahGC",\
       "-Dcom.sun.management.jmxremote",  \
@@ -23,5 +24,4 @@ ENTRYPOINT ["java","org.springframework.boot.loader.JarLauncher","-noverify","-X
       "-Dcom.sun.management.jmxremote.local.only=false",  \
       "-Dcom.sun.management.jmxremote.authenticate=false",  \
       "-Dcom.sun.management.jmxremote.ssl=false",  \
-      "-Djava.security.egd=file:/dev/./urandom", \
-      "--logging.config=/opt/config/logback.xml"]
+      "-Djava.security.egd=file:/dev/./urandom"]

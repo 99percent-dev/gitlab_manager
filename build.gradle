@@ -132,6 +132,7 @@ dependencies {
   implementation(
 
     // spring
+    'org.springframework.boot:spring-boot-starter',
     'org.springframework.boot:spring-boot-starter-web',
 //    'org.mapstruct:mapstruct:1.5.5.Final',
 

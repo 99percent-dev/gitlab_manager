@@ -76,7 +76,8 @@ components:
       type: object
       properties:
         id:
-          type: string
+          type: integer
+          format: int64
       required:
         - id
     CreateProject:
@@ -85,7 +86,8 @@ components:
         projectName:
           type: string
         namespaceId:
-          type: string
+          type: integer
+          format: int64
         description:
           type: string
       required:
@@ -96,9 +98,11 @@ components:
       type: object
       properties:
         projectId:
-          type: string
+          type: integer
+          format: int64
         userId:
-          type: string
+          type: integer
+          format: int64
       required:
         - projectId
         - userId
@@ -106,9 +110,11 @@ components:
       type: object
       properties:
         projectId:
-          type: string
+          type: integer
+          format: int64
         userId:
-          type: string
+          type: integer
+          format: int64
       required:
         - projectId
         - userId

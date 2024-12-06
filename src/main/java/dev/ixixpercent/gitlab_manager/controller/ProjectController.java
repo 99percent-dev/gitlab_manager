@@ -9,6 +9,8 @@ import dev.ixixpercent.gitlab_manager.service.ProjectService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
+import static org.springframework.http.ResponseEntity.ok;
+
 @RestController
 public class ProjectController implements ProjectApi {
 
@@ -21,16 +23,19 @@ public class ProjectController implements ProjectApi {
 
   @Override
   public ResponseEntity<Void> addUserToProject(AddUserToProject user) {
-    return projectService.addUserToProject(user);
+    projectService.addUserToProject(user);
+    return ok().build();
   }
 
   @Override
   public ResponseEntity<Project> createProject(CreateProject project) {
-    return projectService.createProject(project);
+    projectService.createProject(project);
+    return ok(new Project(projectService.createProject(project)));
   }
 
   @Override
   public ResponseEntity<Void> projectUserRemoveDelete(RemoveUserFromProject user) {
-    return projectService.removeUserFromProject();
+    projectService.removeUserFromProject(user);
+    return ok().build();
   }
 }

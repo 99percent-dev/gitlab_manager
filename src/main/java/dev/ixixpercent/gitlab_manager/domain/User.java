@@ -1,9 +1,21 @@
 package dev.ixixpercent.gitlab_manager.domain;
 
-public class User {
-  private Role role;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
 
-  public User(Role role) {
+@EqualsAndHashCode
+@Getter
+@ToString
+public class User {
+  private final Role role;
+  private final String id;
+
+  public User(String id, Role role) {
+    if (id == null || id.isBlank()) {
+      throw new IllegalArgumentException("id cannot be null or empty");
+    }
     this.role = role;
+    this.id = id;
   }
 }

@@ -1,6 +1,6 @@
 package dev.ixixpercent.gitlab_manager.domain;
 
-enum Role {
+public enum Role {
   GUEST,
   PLANNER,
   REPORTER,

@@ -4,7 +4,7 @@
 
 gitlab:
   admin: 1539221
-  personalAccessToken: "glpat-apxm2oxyPKmJh6kqETyc"
+  personalAccessToken: ${GITLAB_PAT}
   url: "https://gitlab.com/"
 
 spring:

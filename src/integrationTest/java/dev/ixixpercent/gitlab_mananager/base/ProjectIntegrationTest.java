@@ -32,9 +32,7 @@ public class ProjectIntegrationTest extends BaseIntegrationTest {
   void createProject() throws Exception {
 
     mvc
-      .perform(post("/project/create")
-                 .content(String.format(CREATE_PROJECT_BODY, getTestUser().namespaceId()))
-                 .contentType(APPLICATION_JSON))
+      .perform(post("/project/create").content(String.format(CREATE_PROJECT_BODY, 1)).contentType(APPLICATION_JSON))
       .andDo(print())
       .andExpect(status().isOk())
       .andExpect(content().contentType(APPLICATION_JSON))
@@ -43,12 +41,12 @@ public class ProjectIntegrationTest extends BaseIntegrationTest {
 
   @Test
   void addMember() throws Exception {
-
+    throw new UnsupportedOperationException("Not supported yet.");
   }
 
   @Test
   void removeMember() throws Exception {
-
+    throw new UnsupportedOperationException("Not supported yet.");
   }
 
 }

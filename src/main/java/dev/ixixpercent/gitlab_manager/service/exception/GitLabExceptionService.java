@@ -23,7 +23,7 @@ public class GitLabExceptionService {
       case 404:
         return new GitLabNotFoundException(message, e);
       case 409:
-        return new GitLabNotConflictException(message, e);
+        return new GitLabConflictException(message, e);
       case 408:
         return new GitLabRequestTimeoutException(message, e);
       case 418:

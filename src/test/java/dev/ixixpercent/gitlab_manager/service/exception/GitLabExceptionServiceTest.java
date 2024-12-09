@@ -45,7 +45,7 @@ class GitLabExceptionServiceTest {
                      dynamicTest("Should return GitLabNotFoundException for HTTP 404",
                                  () -> test(404, GitLabNotFoundException.class)),
                      dynamicTest("Should return GitLabNotConflictException for HTTP 409",
-                                 () -> test(409, GitLabNotConflictException.class)),
+                                 () -> test(409, GitLabConflictException.class)),
                      dynamicTest("Should return GitLabRequestTimeoutException for HTTP 408",
                                  () -> test(408, GitLabRequestTimeoutException.class)),
                      dynamicTest("Should return GitLabServerIsATeapot for HTTP 418",

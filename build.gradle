@@ -18,6 +18,7 @@ plugins {
   id 'java'
   id 'org.springframework.boot' version '3.4.0'
   id("org.openapi.generator") version "7.10.0"
+  id 'info.solidsoft.pitest' version "1.15.0"
 }
 apply plugin: 'io.spring.dependency-management'
 
@@ -96,6 +97,18 @@ sourceSets {
   }
 }
 
+// mutation testing
+pitest {
+  pitestVersion = '1.15.0' // Ensure this matches the PIT plugin version
+  verbose = false
+  junit5PluginVersion = '1.2.1'
+  threads = Runtime.runtime.availableProcessors().intdiv(2) ?: 1
+  outputFormats = ['XML', 'HTML']
+  historyInputLocation = "${project.rootDir}/.mutation_history"
+  historyOutputLocation = "${project.rootDir}/.mutation_history"
+}
+
+
 // integration tests
 configurations {
   integrationTestImplementation.extendsFrom testImplementation
@@ -163,7 +176,6 @@ dependencies {
     'org.junit.jupiter:junit-jupiter',
     'org.springframework.boot:spring-boot-starter-test'
   )
-
 
   integrationTestAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
   integrationTestImplementation(

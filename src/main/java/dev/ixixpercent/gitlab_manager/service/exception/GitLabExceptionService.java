@@ -3,14 +3,16 @@ package dev.ixixpercent.gitlab_manager.service.exception;
 import org.gitlab4j.api.GitLabApiException;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class GitLabExceptionService {
 
-  public <V, K> RuntimeException generateException(Map<K, V> claryfyingInfo, GitLabApiException e) {
+  public <V, K> RuntimeException generateException(Map<K, V> clarifyingInfo, GitLabApiException e) {
     int httpStatus = e.getHttpStatus();
-    String message = claryfyingInfo.toString();
+    String message = Optional.ofNullable(clarifyingInfo).orElse(Collections.emptyMap()).toString();
     switch (httpStatus) {
       case 400:
         return new GitLabBadRequestException(message, e);

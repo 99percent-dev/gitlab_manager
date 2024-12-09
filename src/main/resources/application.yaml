@@ -7,3 +7,7 @@ gitlab:
   personalAccessToken: "glpat-apxm2oxyPKmJh6kqETyc"
   url: "https://gitlab.com/"
 
+spring:
+  threads:
+    virtual:
+      enabled: true
